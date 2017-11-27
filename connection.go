@@ -15,7 +15,7 @@ type ConnectionRequest struct{}
 
 // Do sends an API request and returns the API response.
 func (cmd *ConnectionRequest) Do(c *Client) (*ConnectionResponse, error) {
-	b, err := c.doRequest("GET", URIVersion, nil)
+	b, err := c.doRequest("GET", URIConnection, nil)
 	if err != nil {
 		return nil, err
 	}
