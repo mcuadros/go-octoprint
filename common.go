@@ -2,6 +2,7 @@ package octoprint
 
 import (
 	"encoding/json"
+	"strings"
 	"time"
 )
 
@@ -182,11 +183,50 @@ type VersionResponse struct {
 	Server string `json:"server"`
 }
 
+type ConnectionState string
+
+const (
+	Operational ConnectionState = "Operational"
+)
+
+// The states are  based on:
+// https://github.com/foosel/OctoPrint/blob/77753ca02602d3a798d6b0a22535e6fd69ff448a/src/octoprint/util/comm.py#L549
+// no comments :(
+
+func (s ConnectionState) IsOperational() bool {
+	return strings.HasPrefix(string(s), "Operational") ||
+		strings.HasPrefix(string(s), "Transfering") ||
+		strings.HasPrefix(string(s), "Paused")
+}
+
+func (s ConnectionState) IsPrinting() bool {
+	return strings.HasPrefix(string(s), "Printing") ||
+		strings.HasPrefix(string(s), "Sending") ||
+		strings.HasPrefix(string(s), "Paused")
+}
+
+func (s ConnectionState) IsOffline() bool {
+	return strings.HasPrefix(string(s), "Offline") ||
+		strings.HasPrefix(string(s), "Closed")
+}
+
+func (s ConnectionState) IsError() bool {
+	return strings.HasPrefix(string(s), "Error") ||
+		strings.HasPrefix(string(s), "Unknown")
+}
+
+func (s ConnectionState) IsConnecting() bool {
+	return strings.HasPrefix(string(s), "Opening") ||
+		strings.HasPrefix(string(s), "Detecting") ||
+		strings.HasPrefix(string(s), "Connecting") ||
+		strings.HasPrefix(string(s), "Detecting")
+}
+
 // ConnectionResponse is the response from a connection command.
 type ConnectionResponse struct {
 	Current struct {
 		// State current state of the connection.
-		State string `json:"state"`
+		State ConnectionState `json:"state"`
 		// Port to connect to.
 		Port string `json:"port"`
 		// BaudRate speed of the connection.
