@@ -146,7 +146,7 @@ func (cmd *ToolStateRequest) Do(c *Client) (*TemperatureState, error) {
 type ToolTargetRequest struct {
 	// Target temperature(s) to set, key must match the format tool{n} with n
 	// being the tool’s index starting with 0.
-	Target map[string]int `json:"target"`
+	Targets map[string]float64 `json:"targets"`
 }
 
 // Do sends an API request and returns an error if any.
@@ -174,7 +174,7 @@ func (cmd *ToolTargetRequest) encode(w io.Writer) error {
 type ToolOffsetRequest struct {
 	// Offset is offset(s) to set, key must match the format tool{n} with n
 	// being the tool’s index starting with 0.
-	Offsets map[string]int `json:"offsets"`
+	Offsets map[string]float64 `json:"offsets"`
 }
 
 // Do sends an API request and returns an error if any.
@@ -259,7 +259,7 @@ func (cmd *ToolSelectRequest) encode(w io.Writer) error {
 // the tool.
 type ToolFlowrateRequest struct {
 	// Factor is the new factor, percentage as integer, between 75 and 125%.
-	Factor string `json:"factor"`
+	Factor int `json:"factor"`
 }
 
 // Do sends an API request and returns an error if any.
@@ -316,7 +316,7 @@ func (cmd *BedStateRequest) Do(c *Client) (*TemperatureState, error) {
 // BedTargetRequest sets the given target temperature on the printer’s bed.
 type BedTargetRequest struct {
 	// Target temperature to set.
-	Target int `json:"target"`
+	Target float64 `json:"target"`
 }
 
 // Do sends an API request and returns an error if any.
