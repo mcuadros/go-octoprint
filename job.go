@@ -38,7 +38,7 @@ func (cmd *StartRequest) Do(c *Client) error {
 		return err
 	}
 
-	_, err := c.doRequest("POST", URITool, b)
+	_, err := c.doRequest("POST", JobTool, b)
 	return err
 }
 
@@ -54,7 +54,7 @@ func (cmd *CancelRequest) Do(c *Client) error {
 		return err
 	}
 
-	_, err := c.doRequest("POST", URITool, b)
+	_, err := c.doRequest("POST", JobTool, b)
 	return err
 }
 
@@ -72,7 +72,7 @@ func (cmd *RestartRequest) Do(c *Client) error {
 		return err
 	}
 
-	_, err := c.doRequest("POST", URITool, b)
+	_, err := c.doRequest("POST", JobTool, b)
 	return err
 }
 
@@ -104,7 +104,7 @@ func (cmd *PauseRequest) Do(c *Client) error {
 		return err
 	}
 
-	_, err := c.doRequest("POST", URITool, b)
+	_, err := c.doRequest("POST", JobTool, b)
 	return err
 }
 

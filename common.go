@@ -130,7 +130,7 @@ type PrinterState struct {
 	Text  string `json:"text"`
 	Flags struct {
 		Operations    bool `json:"operational"`
-		Puased        bool `json:"paused"`
+		Paused        bool `json:"paused"`
 		Printing      bool `json:"printing"`
 		SDReady       bool `json:"sdReady"`
 		Error         bool `json:"error"`
@@ -194,14 +194,14 @@ const (
 // no comments :(
 
 func (s ConnectionState) IsOperational() bool {
-	return strings.HasPrefix(string(s), "Operational") ||
-		strings.HasPrefix(string(s), "Transfering") ||
-		strings.HasPrefix(string(s), "Paused")
+	return strings.HasPrefix(string(s), "Operational")
 }
 
 func (s ConnectionState) IsPrinting() bool {
 	return strings.HasPrefix(string(s), "Printing") ||
 		strings.HasPrefix(string(s), "Sending") ||
+		strings.HasPrefix(string(s), "Paused") ||
+		strings.HasPrefix(string(s), "Transfering") ||
 		strings.HasPrefix(string(s), "Paused")
 }
 
