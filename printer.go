@@ -34,7 +34,7 @@ func (cmd *StateRequest) Do(c *Client) (*FullStateResponse, error) {
 		cmd.History, cmd.Limit, strings.Join(cmd.Exclude, ","),
 	)
 
-	b, err := c.doRequest("GET", uri, nil)
+	b, err := c.doJSONRequest("GET", uri, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -75,7 +75,7 @@ func (cmd *PrintHeadJogRequest) Do(c *Client) error {
 		return err
 	}
 
-	_, err := c.doRequest("POST", URIPrintHead, b)
+	_, err := c.doJSONRequest("POST", URIPrintHead, b)
 	return err
 }
 
@@ -102,7 +102,7 @@ func (cmd *PrintHeadHomeRequest) Do(c *Client) error {
 		return err
 	}
 
-	_, err := c.doRequest("POST", URIPrintHead, b)
+	_, err := c.doJSONRequest("POST", URIPrintHead, b)
 	return err
 }
 
@@ -129,7 +129,7 @@ type ToolStateRequest struct {
 // Do sends an API request and returns the API response.
 func (cmd *ToolStateRequest) Do(c *Client) (*TemperatureState, error) {
 	uri := fmt.Sprintf("%s?history=%t&limit=%d", URITool, cmd.History, cmd.Limit)
-	b, err := c.doRequest("GET", uri, nil)
+	b, err := c.doJSONRequest("GET", uri, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -156,7 +156,7 @@ func (cmd *ToolTargetRequest) Do(c *Client) error {
 		return err
 	}
 
-	_, err := c.doRequest("POST", URITool, b)
+	_, err := c.doJSONRequest("POST", URITool, b)
 	return err
 }
 
@@ -184,7 +184,7 @@ func (cmd *ToolOffsetRequest) Do(c *Client) error {
 		return err
 	}
 
-	_, err := c.doRequest("POST", URITool, b)
+	_, err := c.doJSONRequest("POST", URITool, b)
 	return err
 }
 
@@ -213,7 +213,7 @@ func (cmd *ToolExtrudeRequest) Do(c *Client) error {
 		return err
 	}
 
-	_, err := c.doRequest("POST", URITool, b)
+	_, err := c.doJSONRequest("POST", URITool, b)
 	return err
 }
 
@@ -241,7 +241,7 @@ func (cmd *ToolSelectRequest) Do(c *Client) error {
 		return err
 	}
 
-	_, err := c.doRequest("POST", URITool, b)
+	_, err := c.doJSONRequest("POST", URITool, b)
 	return err
 }
 
@@ -269,7 +269,7 @@ func (cmd *ToolFlowrateRequest) Do(c *Client) error {
 		return err
 	}
 
-	_, err := c.doRequest("POST", URITool, b)
+	_, err := c.doJSONRequest("POST", URITool, b)
 	return err
 }
 
@@ -300,7 +300,7 @@ type BedStateRequest struct {
 // Do sends an API request and returns the API response.
 func (cmd *BedStateRequest) Do(c *Client) (*TemperatureState, error) {
 	uri := fmt.Sprintf("%s?history=%t&limit=%d", URIBed, cmd.History, cmd.Limit)
-	b, err := c.doRequest("GET", uri, nil)
+	b, err := c.doJSONRequest("GET", uri, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -326,7 +326,7 @@ func (cmd *BedTargetRequest) Do(c *Client) error {
 		return err
 	}
 
-	_, err := c.doRequest("POST", URIBed, b)
+	_, err := c.doJSONRequest("POST", URIBed, b)
 	return err
 }
 
@@ -353,7 +353,7 @@ func (cmd *BedOffsetRequest) Do(c *Client) error {
 		return err
 	}
 
-	_, err := c.doRequest("POST", URITool, b)
+	_, err := c.doJSONRequest("POST", URITool, b)
 	return err
 }
 
@@ -382,6 +382,6 @@ func (cmd *CommandRequest) Do(c *Client) error {
 		return err
 	}
 
-	_, err := c.doRequest("POST", URICommand, b)
+	_, err := c.doJSONRequest("POST", URICommand, b)
 	return err
 }

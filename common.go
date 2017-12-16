@@ -2,6 +2,7 @@ package octoprint
 
 import (
 	"encoding/json"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -49,24 +50,6 @@ type JobInformation struct {
 		Volume float64 `json:"volume"`
 	} `json:"filament"`
 	FilePosition int `json:"filepos"`
-}
-
-// FileInformation contains information regarding a file.
-type FileInformation struct {
-	// Name is name of the file without path. E.g. “file.gco” for a file
-	// “file.gco” located anywhere in the file system.
-	Name string `json:"name"`
-	// Path is the path to the file within the location. E.g.
-	//“folder/subfolder/file.gco” for a file “file.gco” located within “folder”
-	// and “subfolder” relative to the root of the location.
-	Path string `json:"path"`
-	// Type of file. model or machinecode. Or folder if it’s a folder, in
-	// which case the children node will be populated.
-	Type string `json:"type"`
-	// TypePath path to type of file in extension tree. E.g. `["model", "stl"]`
-	// for .stl files, or `["machinecode", "gcode"]` for .gcode files.
-	// `["folder"]` for folders.
-	TypePath string `json:"typePath"`
 }
 
 // ProgressInformation contains information regarding the progress of the
@@ -148,7 +131,7 @@ type SDState struct {
 type HistoricTemperatureData historicTemperatureData
 type historicTemperatureData struct {
 	// Time of this data point.
-	Time time.Time `json:"time"`
+	Time JSONTime `json:"time"`
 	// Tools is temperature stats a set of tools.
 	Tools map[string]TemperatureData `json:"tools"`
 }
@@ -162,7 +145,7 @@ func (h *HistoricTemperatureData) UnmarshalJSON(b []byte) error {
 	ts := raw["time"]
 	delete(raw, "time")
 	b, _ = json.Marshal(map[string]interface{}{
-		"time":  time.Unix(int64(ts.(float64)), 0),
+		"time":  ts,
 		"tools": raw,
 	})
 
@@ -259,4 +242,129 @@ type Profile struct {
 	ID string `json:"id"`
 	// Name is the display name of the profile.
 	Name string `json:"name"`
+}
+
+// FilesResponse is the response to a FilesRequest.
+type FilesResponse struct {
+	// Files is the list of requested files. Might be an empty list if no files
+	// are available
+	Files []*FileInformation
+	// Free is the amount of disk space in bytes available in the local disk
+	// space (refers to OctoPrint’s `uploads` folder). Only returned if file
+	// list was requested for origin `local` or all origins.
+	Free int
+}
+
+// FileInformation contains information regarding a file.
+type FileInformation struct {
+	// Name is name of the file without path. E.g. “file.gco” for a file
+	// “file.gco” located anywhere in the file system.
+	Name string `json:"name"`
+	// Path is the path to the file within the location. E.g.
+	//“folder/subfolder/file.gco” for a file “file.gco” located within “folder”
+	// and “subfolder” relative to the root of the location.
+	Path string `json:"path"`
+	// Type of file. model or machinecode. Or folder if it’s a folder, in
+	// which case the children node will be populated.
+	Type string `json:"type"`
+	// TypePath path to type of file in extension tree. E.g. `["model", "stl"]`
+	// for .stl files, or `["machinecode", "gcode"]` for .gcode files.
+	// `["folder"]` for folders.
+	TypePath []string `json:"typePath"`
+	// Hash is the MD5 hash of the file. Only available for `local` files.
+	Hash string `json:"hash"`
+	// Size of the file in bytes. Only available for `local` files or `sdcard`
+	// files if the printer supports file sizes for sd card files.
+	Size int `json:"size"`
+	// Date when this file was uploaded. Only available for `local` files.
+	Date JSONTime `json:"date"`
+	// Origin of the file, `local` when stored in OctoPrint’s `uploads` folder,
+	// `sdcard` when stored on the printer’s SD card (if available)
+	Origin string `json:"origin"`
+	// Refs references relevant to this file, left out in abridged versio
+	Refs Reference `json:"refs"`
+	// GCodeAnalysis information from the analysis of the GCODE file, if
+	// available. Left out in abridged version.
+	GCodeAnalysis GCodeAnalysisInformation `json:"gcodeAnalysis"`
+	// Print information from the print stats of a file.
+	Print PrintStats `json:"print"`
+}
+
+// Reference of a file.
+type Reference struct {
+	// Resource that represents the file or folder (e.g. for issuing commands
+	// to or for deleting)
+	Resource string `json:"resource"`
+	// Download URL for the file. Never present for folders.
+	Download string `json:"download"`
+	// Model from which this file was generated (e.g. an STL, currently not
+	// used). Never present for folders.
+	Model string `json:"model"`
+}
+
+// GCodeAnalysisInformation Information from the analysis of the GCODE file.
+type GCodeAnalysisInformation struct {
+	// EstimatedPrintTime is the estimated print time of the file, in seconds.
+	EstimatedPrintTime int `json:"estimatedPrintTime"`
+	// Filament estimated usage of filament
+	Filament struct {
+		// Length estimated of filament used, in mm
+		Length int `json:"length"`
+		// Volume estimated of filament used, in cm³
+		Volume float64 `json:"volume"`
+	} `json:"filament"`
+}
+
+// PrintStats information from the print stats of a file.
+type PrintStats struct {
+	// Failure number of failed prints.
+	Failure int `json:"failure"`
+	// Success number of success prints.
+	Success int `json:"success"`
+	// Last print information.
+	Last struct {
+		// Date of the last print.
+		Date JSONTime `json:"date"`
+		// Success or not.
+		Success bool `json:"success"`
+	} `json:"last"`
+}
+
+// UploadFileResponse is the response to a UploadFileRequest.
+type UploadFileResponse struct {
+	// Abridged information regarding the file that was just uploaded. If only
+	// uploaded to local this will only contain the local property. If uploaded
+	// to SD card, this will contain both local and sdcard properties. Only
+	// contained if a file was uploaded, not present if only a new folder was
+	// created.
+	File struct {
+		// Local is the information regarding the file that was just uploaded
+		// to the local storage.
+		Local *FileInformation `json:"local"`
+		// SDCard is the information regarding the file that was just uploaded
+		// to the printer’s SD card.
+		SDCard *FileInformation `json:"sdcard"`
+	} `json:"files"`
+	// Done whether any file processing after upload has already finished or
+	// not, e.g. due to first needing to perform a slicing step. Clients may
+	// use this information to direct progress displays related to the upload.
+	Done bool `json:"done"`
+}
+
+type JSONTime struct{ time.Time }
+
+func (t JSONTime) MarshalJSON() ([]byte, error) {
+	return []byte(strconv.FormatInt(time.Time(t.Time).Unix(), 10)), nil
+}
+
+func (t *JSONTime) UnmarshalJSON(s []byte) (err error) {
+	r := strings.Replace(string(s), `"`, ``, -1)
+
+	q, err := strconv.ParseInt(r, 10, 64)
+	if err != nil {
+		return err
+	}
+
+	t.Time = time.Unix(q, 0)
+	return
 }

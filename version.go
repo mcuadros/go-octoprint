@@ -11,7 +11,7 @@ type VersionRequest struct{}
 
 // Do sends an API request and returns the API response.
 func (cmd *VersionRequest) Do(c *Client) (*VersionResponse, error) {
-	b, err := c.doRequest("GET", URIVersion, nil)
+	b, err := c.doJSONRequest("GET", URIVersion, nil)
 	if err != nil {
 		return nil, err
 	}

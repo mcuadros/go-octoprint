@@ -31,13 +31,13 @@ func NewClient(baseURL, apiKey string) *Client {
 	}
 }
 
-func (c *Client) doRequest(method, target string, body io.Reader) ([]byte, error) {
+func (c *Client) doRequest(method, target, contentType string, body io.Reader) ([]byte, error) {
 	req, err := http.NewRequest(method, joinURL(c.baseURL, target), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add("Content-Type", contentType)
 	req.Header.Add("X-Api-Key", c.apiKey)
 
 	resp, err := c.c.Do(req)
@@ -52,6 +52,10 @@ func (c *Client) doRequest(method, target string, body io.Reader) ([]byte, error
 
 	err = cacheRequest(target, js)
 	return js, err
+}
+
+func (c *Client) doJSONRequest(method, target string, body io.Reader) ([]byte, error) {
+	return c.doRequest(method, target, "application/json", body)
 }
 
 func (c *Client) handleResponse(r *http.Response) ([]byte, error) {

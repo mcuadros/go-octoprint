@@ -15,7 +15,7 @@ type ConnectionRequest struct{}
 
 // Do sends an API request and returns the API response.
 func (cmd *ConnectionRequest) Do(c *Client) (*ConnectionResponse, error) {
-	b, err := c.doRequest("GET", URIConnection, nil)
+	b, err := c.doJSONRequest("GET", URIConnection, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +56,7 @@ func (cmd *ConnectRequest) Do(c *Client) error {
 		return err
 	}
 
-	_, err := c.doRequest("POST", URIConnection, b)
+	_, err := c.doJSONRequest("POST", URIConnection, b)
 	return err
 }
 
@@ -82,7 +82,7 @@ func (cmd *DisconnectRequest) Do(c *Client) error {
 		return err
 	}
 
-	_, err := c.doRequest("POST", URIConnection, b)
+	_, err := c.doJSONRequest("POST", URIConnection, b)
 	return err
 }
 
@@ -103,6 +103,6 @@ func (cmd *FakesACKRequest) Do(c *Client) error {
 		return err
 	}
 
-	_, err := c.doRequest("POST", URIConnection, b)
+	_, err := c.doJSONRequest("POST", URIConnection, b)
 	return err
 }

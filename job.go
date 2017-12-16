@@ -13,7 +13,7 @@ type JobRequest struct{}
 
 // Do sends an API request and returns the API response.
 func (cmd *JobRequest) Do(c *Client) (*JobResponse, error) {
-	b, err := c.doRequest("GET", JobTool, nil)
+	b, err := c.doJSONRequest("GET", JobTool, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -38,7 +38,7 @@ func (cmd *StartRequest) Do(c *Client) error {
 		return err
 	}
 
-	_, err := c.doRequest("POST", JobTool, b)
+	_, err := c.doJSONRequest("POST", JobTool, b)
 	return err
 }
 
@@ -54,7 +54,7 @@ func (cmd *CancelRequest) Do(c *Client) error {
 		return err
 	}
 
-	_, err := c.doRequest("POST", JobTool, b)
+	_, err := c.doJSONRequest("POST", JobTool, b)
 	return err
 }
 
@@ -72,7 +72,7 @@ func (cmd *RestartRequest) Do(c *Client) error {
 		return err
 	}
 
-	_, err := c.doRequest("POST", JobTool, b)
+	_, err := c.doJSONRequest("POST", JobTool, b)
 	return err
 }
 
@@ -104,7 +104,7 @@ func (cmd *PauseRequest) Do(c *Client) error {
 		return err
 	}
 
-	_, err := c.doRequest("POST", JobTool, b)
+	_, err := c.doJSONRequest("POST", JobTool, b)
 	return err
 }
 
