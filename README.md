@@ -45,6 +45,101 @@ for tool, state := range s.Temperature.Current {
 }
 ```
 
+## Implemented Methods
+
+### [Version Information](http://docs.octoprint.org/en/master/api/version.html)
+- [x] GET `/api/version`
+
+### [Apps](http://docs.octoprint.org/en/master/api/apps.html)
+- [ ] GET `/apps/auth`
+- [ ] POST `/apps/auth`
+
+### [Connection Operations](http://docs.octoprint.org/en/master/api/connection.html)
+- [x] GET `/api/connection`
+- [x] POST `/api/connection`
+
+
+### [File Operations](http://docs.octoprint.org/en/master/api/files.html)
+- [x] GET `/api/files
+- [ ] GET `/api/files/<location>`
+- [x] POST `/api/files/<location>`
+- [ ] GET `/api/files/<location>/<filename>`
+- [ ] POST `/api/files/<location>/<path>`
+- [ ] DELETE `/api/files/<location>/<path>`
+
+### [Job Operations](http://docs.octoprint.org/en/master/api/job.html)
+- [x] POST `/api/job`
+- [x] GET `/api/job`
+
+### [Languages](http://docs.octoprint.org/en/master/api/languages.html)
+- [ ] GET `/api/languages`
+- [ ] POST `/api/languages`
+- [ ] DELETE `/api/languages/<locale>/<pack>`
+
+### [Log file management](http://docs.octoprint.org/en/master/api/logs.html)
+- [ ] GET `/api/logs`
+- [ ] DELETE `/api/logs/<filename>`
+
+### [Printer Operations](http://docs.octoprint.org/en/master/api/printer.html)
+- [x] GET `/api/printer`
+- [x] POST `/api/printer/printhead`
+- [x] POST `/api/printer/tool`
+- [x] GET `/api/printer/tool`
+- [x] POST `/api/printer/bed`
+- [x] GET `/api/printer/bed`
+- [ ] POST `/api/printer/sd`
+- [ ] GET `/api/printer/sd`
+- [x] POST `/api/printer/command`
+
+### [Printer profile operations](http://docs.octoprint.org/en/master/api/printerprofiles.html)
+- [ ] GET `/api/printerprofiles`
+- [ ] POST `/api/printerprofiles`
+- [ ] PATCH `/api/printerprofiles/<profile>`
+- [ ] DELETE `/api/printerprofiles/<profile>`
+
+### [Settings](http://docs.octoprint.org/en/master/api/settings.html)
+- [ ] GET `/api/settings`
+- [ ] POST `/api/settings`
+- [ ] POST `/api/settings/apikey`
+
+### [Slicing](http://docs.octoprint.org/en/master/api/slicing.html)
+- [ ] GET `/api/slicing`
+- [ ] GET `/api/slicing/<slicer>/profiles`
+- [ ] GET `/api/slicing/<slicer>/profiles/<key>`
+- [ ] PUT `/api/slicing/<slicer>/profiles/<key>`
+- [ ] DELETE `/api/slicing/<slicer>/profiles/<key>`
+
+### [System](http://docs.octoprint.org/en/master/api/system.html)
+- [ ] GET `/api/system/commands`
+- [ ] GET `/api/system/commands/<source>`
+- [ ] POST `/api/system/commands/<source>/<action>`
+
+### [Timelapse](http://docs.octoprint.org/en/master/api/timelapse.html)
+- [ ] GET `/api/timelapse`
+- [ ] DELETE `/api/timelapse/<filename>`
+- [ ] POST `/api/timelapse/unrendered/<name>`
+- [ ] DELETE `/api/timelapse/unrendered/<name>`
+- [ ] POST `/api/timelapse`
+
+### [User](http://docs.octoprint.org/en/master/api/users.html)
+- [ ] GET `/api/users`
+- [ ] GET `/api/users/<username>`
+- [ ] POST `/api/users`
+- [ ] PUT `/api/users/<username>`
+- [ ] DELETE `/api/users/<username>`
+- [ ] PUT `/api/users/<username>/password`
+- [ ] GET `/api/users/<username>/settings`
+- [ ] PATCH `/api/users/<username>/settings`
+- [ ] POST `/api/users/<username>/apikey`
+- [ ] DELETE `/api/users/<username>/apikey`
+
+### [Util](http://docs.octoprint.org/en/master/api/util.html)
+- [ ] POST `/api/util/test`
+
+### [Wizard](http://docs.octoprint.org/en/master/api/wizard.html)
+- [ ] GET `/setup/wizard`
+- [ ] POST `/setup/wizard`
+
 License
 -------
 
