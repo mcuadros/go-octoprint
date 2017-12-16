@@ -58,14 +58,13 @@ for tool, state := range s.Temperature.Current {
 - [x] GET `/api/connection`
 - [x] POST `/api/connection`
 
-
 ### [File Operations](http://docs.octoprint.org/en/master/api/files.html)
 - [x] GET `/api/files
-- [ ] GET `/api/files/<location>`
+- [x] GET `/api/files/<location>`
 - [x] POST `/api/files/<location>`
-- [ ] GET `/api/files/<location>/<filename>`
-- [ ] POST `/api/files/<location>/<path>`
-- [ ] DELETE `/api/files/<location>/<path>`
+- [x] GET `/api/files/<location>/<filename>`
+- [x] POST `/api/files/<location>/<path>` (Only select command)
+- [x] DELETE `/api/files/<location>/<path>`
 
 ### [Job Operations](http://docs.octoprint.org/en/master/api/job.html)
 - [x] POST `/api/job`
