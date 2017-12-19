@@ -17,6 +17,29 @@ const (
 	SDCard Location = "sdcard"
 )
 
+var (
+	FilesLocationGETErrors = statusMapping{
+		404: "Location is neither local nor sdcard",
+	}
+	FilesLocationPOSTErrors = statusMapping{
+		400: "No file or foldername are included in the request, userdata was provided but could not be parsed as JSON or the request is otherwise invalid.",
+		404: "Location is neither local nor sdcard or trying to upload to SD card and SD card support is disabled",
+		409: "The upload of the file would override the file that is currently being printed or if an upload to SD card was requested and the printer is either not operational or currently busy with a print job.",
+		415: "The file is neither a gcode nor an stl file (or it is an stl file but slicing support is disabled)",
+		500: "The upload failed internally",
+	}
+	FilesLocationPathPOSTErrors = statusMapping{
+		400: "The command is unknown or the request is otherwise invalid",
+		415: "A slice command was issued against something other than an STL file.",
+		404: "Location is neither local nor sdcard or the requested file was not found",
+		409: "Selected file is supposed to start printing directly but the printer is not operational or if a file to be sliced is supposed to be selected or start printing directly but the printer is not operational or already printing.",
+	}
+	FilesLocationDeleteErrors = statusMapping{
+		404: "Location is neither local nor sdcard",
+		409: "The file to be deleted is currently being printed",
+	}
+)
+
 // FileRequest retrieves the selected file’s or folder’s information.
 type FileRequest struct {
 	// Location of the file for which to retrieve the information, either
@@ -35,7 +58,7 @@ func (cmd *FileRequest) Do(c *Client) (*FileInformation, error) {
 		cmd.Location, cmd.Filename, cmd.Recursive,
 	)
 
-	b, err := c.doJSONRequest("GET", uri, nil)
+	b, err := c.doJSONRequest("GET", uri, nil, FilesLocationGETErrors)
 	if err != nil {
 		return nil, err
 	}
@@ -65,7 +88,7 @@ func (cmd *FilesRequest) Do(c *Client) (*FilesResponse, error) {
 		uri = fmt.Sprintf("%s/%s?recursive=%t", URIFiles, cmd.Location, cmd.Recursive)
 	}
 
-	b, err := c.doJSONRequest("GET", uri, nil)
+	b, err := c.doJSONRequest("GET", uri, nil, FilesLocationGETErrors)
 	if err != nil {
 		return nil, err
 	}
@@ -129,7 +152,7 @@ func (req *UploadFileRequest) Do(c *Client) (*UploadFileResponse, error) {
 	req.addSelectPrintAndClose()
 
 	uri := fmt.Sprintf("%s/%s", URIFiles, req.Location)
-	b, err := c.doRequest("POST", uri, req.w.FormDataContentType(), req.b)
+	b, err := c.doRequest("POST", uri, req.w.FormDataContentType(), req.b, FilesLocationPOSTErrors)
 	if err != nil {
 		return nil, err
 	}
@@ -169,9 +192,7 @@ type DeleteFileRequest struct {
 // Do sends an API request and returns error if any.
 func (req *DeleteFileRequest) Do(c *Client) error {
 	uri := fmt.Sprintf("%s/%s/%s", URIFiles, req.Location, req.Path)
-
-	fmt.Println(uri)
-	if _, err := c.doJSONRequest("DELETE", uri, bytes.NewBuffer(nil)); err != nil {
+	if _, err := c.doJSONRequest("DELETE", uri, nil, FilesLocationDeleteErrors); err != nil {
 		return err
 	}
 
@@ -201,7 +222,7 @@ func (cmd *SelectFileRequest) Do(c *Client) error {
 	}
 
 	uri := fmt.Sprintf("%s/%s/%s", URIFiles, cmd.Location, cmd.Path)
-	_, err := c.doJSONRequest("POST", uri, b)
+	_, err := c.doJSONRequest("POST", uri, b, FilesLocationPathPOSTErrors)
 	return err
 }
 

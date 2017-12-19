@@ -8,12 +8,16 @@ import (
 
 const JobTool = "/api/job"
 
+var JobToolErrors = statusMapping{
+	409: "Printer is not operational or the current print job state does not match the preconditions for the command.",
+}
+
 // JobRequest retrieve information about the current job (if there is one).
 type JobRequest struct{}
 
 // Do sends an API request and returns the API response.
 func (cmd *JobRequest) Do(c *Client) (*JobResponse, error) {
-	b, err := c.doJSONRequest("GET", JobTool, nil)
+	b, err := c.doJSONRequest("GET", JobTool, nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -38,7 +42,7 @@ func (cmd *StartRequest) Do(c *Client) error {
 		return err
 	}
 
-	_, err := c.doJSONRequest("POST", JobTool, b)
+	_, err := c.doJSONRequest("POST", JobTool, b, JobToolErrors)
 	return err
 }
 
@@ -54,7 +58,7 @@ func (cmd *CancelRequest) Do(c *Client) error {
 		return err
 	}
 
-	_, err := c.doJSONRequest("POST", JobTool, b)
+	_, err := c.doJSONRequest("POST", JobTool, b, JobToolErrors)
 	return err
 }
 
@@ -72,7 +76,7 @@ func (cmd *RestartRequest) Do(c *Client) error {
 		return err
 	}
 
-	_, err := c.doJSONRequest("POST", JobTool, b)
+	_, err := c.doJSONRequest("POST", JobTool, b, JobToolErrors)
 	return err
 }
 
@@ -104,7 +108,7 @@ func (cmd *PauseRequest) Do(c *Client) error {
 		return err
 	}
 
-	_, err := c.doJSONRequest("POST", JobTool, b)
+	_, err := c.doJSONRequest("POST", JobTool, b, JobToolErrors)
 	return err
 }
 

@@ -11,9 +11,26 @@ import (
 const (
 	URIPrinter   = "/api/printer"
 	URIPrintHead = "/api/printer/printhead"
-	URITool      = "/api/printer/tool"
-	URIBed       = "/api/printer/bed"
+	URIPrintTool = "/api/printer/tool"
+	URIPrintBed  = "/api/printer/bed"
 	URICommand   = "/api/printer/command"
+)
+
+var (
+	PrintErrors = statusMapping{
+		409: "Printer is not operational",
+	}
+	PrintHeadJobErrors = statusMapping{
+		400: "Invalid axis specified, invalid value for travel amount for a jog command or factor for feed rate or otherwise invalid request",
+		409: "Printer is not operational or currently printing",
+	}
+	PrintToolErrors = statusMapping{
+		400: "Targets or offsets contains a property or tool contains a value not matching the format tool{n}, the target/offset temperature, extrusion amount or flow rate factor is not a valid number or outside of the supported range, or if the request is otherwise invalid",
+		409: "Printer is not operational",
+	}
+	PrintBedErrors = statusMapping{
+		409: "Printer is not operational or the selected printer profile does not have a heated bed.",
+	}
 )
 
 // StateRequest retrieves the current state of the printer.
@@ -34,7 +51,7 @@ func (cmd *StateRequest) Do(c *Client) (*FullStateResponse, error) {
 		cmd.History, cmd.Limit, strings.Join(cmd.Exclude, ","),
 	)
 
-	b, err := c.doJSONRequest("GET", uri, nil)
+	b, err := c.doJSONRequest("GET", uri, nil, PrintErrors)
 	if err != nil {
 		return nil, err
 	}
@@ -75,7 +92,8 @@ func (cmd *PrintHeadJogRequest) Do(c *Client) error {
 		return err
 	}
 
-	_, err := c.doJSONRequest("POST", URIPrintHead, b)
+	_, err := c.doJSONRequest("POST", URIPrintHead, b, PrintHeadJobErrors)
+
 	return err
 }
 
@@ -102,7 +120,7 @@ func (cmd *PrintHeadHomeRequest) Do(c *Client) error {
 		return err
 	}
 
-	_, err := c.doJSONRequest("POST", URIPrintHead, b)
+	_, err := c.doJSONRequest("POST", URIPrintHead, b, PrintHeadJobErrors)
 	return err
 }
 
@@ -128,8 +146,8 @@ type ToolStateRequest struct {
 
 // Do sends an API request and returns the API response.
 func (cmd *ToolStateRequest) Do(c *Client) (*TemperatureState, error) {
-	uri := fmt.Sprintf("%s?history=%t&limit=%d", URITool, cmd.History, cmd.Limit)
-	b, err := c.doJSONRequest("GET", uri, nil)
+	uri := fmt.Sprintf("%s?history=%t&limit=%d", URIPrintTool, cmd.History, cmd.Limit)
+	b, err := c.doJSONRequest("GET", uri, nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -156,7 +174,7 @@ func (cmd *ToolTargetRequest) Do(c *Client) error {
 		return err
 	}
 
-	_, err := c.doJSONRequest("POST", URITool, b)
+	_, err := c.doJSONRequest("POST", URIPrintTool, b, PrintToolErrors)
 	return err
 }
 
@@ -184,7 +202,7 @@ func (cmd *ToolOffsetRequest) Do(c *Client) error {
 		return err
 	}
 
-	_, err := c.doJSONRequest("POST", URITool, b)
+	_, err := c.doJSONRequest("POST", URIPrintTool, b, PrintToolErrors)
 	return err
 }
 
@@ -213,7 +231,7 @@ func (cmd *ToolExtrudeRequest) Do(c *Client) error {
 		return err
 	}
 
-	_, err := c.doJSONRequest("POST", URITool, b)
+	_, err := c.doJSONRequest("POST", URIPrintTool, b, PrintToolErrors)
 	return err
 }
 
@@ -241,7 +259,7 @@ func (cmd *ToolSelectRequest) Do(c *Client) error {
 		return err
 	}
 
-	_, err := c.doJSONRequest("POST", URITool, b)
+	_, err := c.doJSONRequest("POST", URIPrintTool, b, PrintToolErrors)
 	return err
 }
 
@@ -269,7 +287,7 @@ func (cmd *ToolFlowrateRequest) Do(c *Client) error {
 		return err
 	}
 
-	_, err := c.doJSONRequest("POST", URITool, b)
+	_, err := c.doJSONRequest("POST", URIPrintTool, b, PrintToolErrors)
 	return err
 }
 
@@ -299,8 +317,8 @@ type BedStateRequest struct {
 
 // Do sends an API request and returns the API response.
 func (cmd *BedStateRequest) Do(c *Client) (*TemperatureState, error) {
-	uri := fmt.Sprintf("%s?history=%t&limit=%d", URIBed, cmd.History, cmd.Limit)
-	b, err := c.doJSONRequest("GET", uri, nil)
+	uri := fmt.Sprintf("%s?history=%t&limit=%d", URIPrintBed, cmd.History, cmd.Limit)
+	b, err := c.doJSONRequest("GET", uri, nil, PrintBedErrors)
 	if err != nil {
 		return nil, err
 	}
@@ -326,7 +344,7 @@ func (cmd *BedTargetRequest) Do(c *Client) error {
 		return err
 	}
 
-	_, err := c.doJSONRequest("POST", URIBed, b)
+	_, err := c.doJSONRequest("POST", URIPrintBed, b, PrintBedErrors)
 	return err
 }
 
@@ -353,7 +371,7 @@ func (cmd *BedOffsetRequest) Do(c *Client) error {
 		return err
 	}
 
-	_, err := c.doJSONRequest("POST", URITool, b)
+	_, err := c.doJSONRequest("POST", URIPrintTool, b, PrintToolErrors)
 	return err
 }
 
@@ -382,6 +400,6 @@ func (cmd *CommandRequest) Do(c *Client) error {
 		return err
 	}
 
-	_, err := c.doJSONRequest("POST", URICommand, b)
+	_, err := c.doJSONRequest("POST", URICommand, b, nil)
 	return err
 }

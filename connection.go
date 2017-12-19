@@ -8,6 +8,10 @@ import (
 
 const URIConnection = "/api/connection"
 
+var ConnectionErrors = statusMapping{
+	400: "The selected port or baudrate for a connect command are not part of the available option",
+}
+
 // ConnectionRequest Retrieve the current connection settings, including
 // information regarding the available baudrates and serial ports and the
 // current connection state.
@@ -15,7 +19,7 @@ type ConnectionRequest struct{}
 
 // Do sends an API request and returns the API response.
 func (cmd *ConnectionRequest) Do(c *Client) (*ConnectionResponse, error) {
-	b, err := c.doJSONRequest("GET", URIConnection, nil)
+	b, err := c.doJSONRequest("GET", URIConnection, nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +60,7 @@ func (cmd *ConnectRequest) Do(c *Client) error {
 		return err
 	}
 
-	_, err := c.doJSONRequest("POST", URIConnection, b)
+	_, err := c.doJSONRequest("POST", URIConnection, b, ConnectionErrors)
 	return err
 }
 
@@ -82,7 +86,7 @@ func (cmd *DisconnectRequest) Do(c *Client) error {
 		return err
 	}
 
-	_, err := c.doJSONRequest("POST", URIConnection, b)
+	_, err := c.doJSONRequest("POST", URIConnection, b, ConnectionErrors)
 	return err
 }
 
@@ -103,6 +107,6 @@ func (cmd *FakesACKRequest) Do(c *Client) error {
 		return err
 	}
 
-	_, err := c.doJSONRequest("POST", URIConnection, b)
+	_, err := c.doJSONRequest("POST", URIConnection, b, ConnectionErrors)
 	return err
 }
