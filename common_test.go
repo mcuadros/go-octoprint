@@ -160,3 +160,11 @@ func TestFullStateResponse(t *testing.T) {
 	assert.Len(t, r.Temperature.Current, 3)
 	assert.Len(t, r.Temperature.History, 2)
 }
+
+func TestFileInformation_IsFolder(t *testing.T) {
+	f := &FileInformation{TypePath: []string{"folder"}}
+	assert.True(t, f.IsFolder())
+
+	f = &FileInformation{}
+	assert.False(t, f.IsFolder())
+}

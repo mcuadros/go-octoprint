@@ -290,6 +290,15 @@ type FileInformation struct {
 	Print PrintStats `json:"print"`
 }
 
+// IsFolder it returns true if the file is a folder.
+func (f *FileInformation) IsFolder() bool {
+	if len(f.TypePath) == 1 && f.TypePath[0] == "folder" {
+		return true
+	}
+
+	return false
+}
+
 // Reference of a file.
 type Reference struct {
 	// Resource that represents the file or folder (e.g. for issuing commands
