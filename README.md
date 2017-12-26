@@ -86,8 +86,8 @@ for tool, state := range s.Temperature.Current {
 - [x] GET `/api/printer/tool`
 - [x] POST `/api/printer/bed`
 - [x] GET `/api/printer/bed`
-- [ ] POST `/api/printer/sd`
-- [ ] GET `/api/printer/sd`
+- [x] POST `/api/printer/sd`
+- [x] GET `/api/printer/sd`
 - [x] POST `/api/printer/command`
 
 ### [Printer profile operations](http://docs.octoprint.org/en/master/api/printerprofiles.html)

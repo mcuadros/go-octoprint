@@ -13,6 +13,7 @@ const (
 	URIPrintHead = "/api/printer/printhead"
 	URIPrintTool = "/api/printer/tool"
 	URIPrintBed  = "/api/printer/bed"
+	URIPrintSD   = "/api/printer/sd"
 	URICommand   = "/api/printer/command"
 )
 
@@ -30,6 +31,10 @@ var (
 	}
 	PrintBedErrors = statusMapping{
 		409: "Printer is not operational or the selected printer profile does not have a heated bed.",
+	}
+	PrintSDErrors = statusMapping{
+		404: "SD support has been disabled in OctoPrint’s settings.",
+		409: "SD card has not been initialized.",
 	}
 )
 
@@ -401,5 +406,66 @@ func (cmd *CommandRequest) Do(c *Client) error {
 	}
 
 	_, err := c.doJSONRequest("POST", URICommand, b, nil)
+	return err
+}
+
+// SDStateRequest retrieves the current state of the printer’s SD card. For this
+// request no authentication is needed.
+type SDStateRequest struct{}
+
+// Do sends an API request and returns the API response.
+func (cmd *SDStateRequest) Do(c *Client) (*SDState, error) {
+	b, err := c.doJSONRequest("GET", URIPrintSD, nil, PrintSDErrors)
+	if err != nil {
+		return nil, err
+	}
+
+	r := &SDState{}
+	if err := json.Unmarshal(b, r); err != nil {
+		return nil, err
+	}
+
+	return r, err
+}
+
+// SDInitRequest initializes the printer’s SD card, making it available for use.
+// This also includes an initial retrieval of the list of files currently stored
+// on the SD card.
+type SDInitRequest struct{}
+
+// Do sends an API request and returns an error if any.
+func (cmd *SDInitRequest) Do(c *Client) error {
+	return doCommandRequest(c, URIPrintSD, "init", PrintSDErrors)
+}
+
+// SDRefreshRequest Refreshes the list of files stored on the printer’s SD card.
+type SDRefreshRequest struct{}
+
+// Do sends an API request and returns an error if any.
+func (cmd *SDRefreshRequest) Do(c *Client) error {
+	return doCommandRequest(c, URIPrintSD, "refresh", PrintSDErrors)
+}
+
+// SDReleaseRequest releases the SD card from the printer. The reverse operation
+// to init. After issuing this command, the SD card won’t be available anymore,
+// hence and operations targeting files stored on it will fail.
+type SDReleaseRequest struct{}
+
+// Do sends an API request and returns an error if any.
+func (cmd *SDReleaseRequest) Do(c *Client) error {
+	return doCommandRequest(c, URIPrintSD, "release", PrintSDErrors)
+}
+
+// doCommandRequest can be used in any operation where the only required field
+// is the `command` field.
+func doCommandRequest(c *Client, uri, command string, m statusMapping) error {
+	v := map[string]string{"command": command}
+
+	b := bytes.NewBuffer(nil)
+	if err := json.NewEncoder(b).Encode(v); err != nil {
+		return err
+	}
+
+	_, err := c.doJSONRequest("POST", uri, b, m)
 	return err
 }
