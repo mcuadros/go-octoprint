@@ -368,6 +368,9 @@ func (t JSONTime) MarshalJSON() ([]byte, error) {
 
 func (t *JSONTime) UnmarshalJSON(s []byte) (err error) {
 	r := strings.Replace(string(s), `"`, ``, -1)
+	if r == "null" {
+		return nil
+	}
 
 	q, err := strconv.ParseInt(r, 10, 64)
 	if err != nil {

@@ -168,3 +168,9 @@ func TestFileInformation_IsFolder(t *testing.T) {
 	f = &FileInformation{}
 	assert.False(t, f.IsFolder())
 }
+
+func TestJSONTime_UnmarshalJSONWithNull(t *testing.T) {
+	time := &JSONTime{}
+	err := time.UnmarshalJSON([]byte("null"))
+	assert.NoError(t, err)
+}
