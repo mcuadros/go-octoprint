@@ -1,6 +1,7 @@
 package octoprint
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -11,6 +12,9 @@ import (
 	"strings"
 	"time"
 )
+
+// ErrUnauthorized missing or invalid API key
+var ErrUnauthorized = errors.New("Missing or invalid API key")
 
 // A Client manages communication with the OctoPrint API.
 type Client struct {
@@ -77,6 +81,10 @@ func (c *Client) handleResponse(r *http.Response, m statusMapping) ([]byte, erro
 		if err := m.Error(r.StatusCode); err != nil {
 			return nil, err
 		}
+	}
+
+	if r.StatusCode == 401 {
+		return nil, ErrUnauthorized
 	}
 
 	if r.StatusCode == 204 {
