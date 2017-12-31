@@ -7,6 +7,8 @@ import (
 	"time"
 )
 
+var Version = "0.1"
+
 type Axis string
 
 const (
@@ -174,7 +176,6 @@ const (
 
 // The states are  based on:
 // https://github.com/foosel/OctoPrint/blob/77753ca02602d3a798d6b0a22535e6fd69ff448a/src/octoprint/util/comm.py#L549
-// no comments :(
 
 func (s ConnectionState) IsOperational() bool {
 	return strings.HasPrefix(string(s), "Operational")
