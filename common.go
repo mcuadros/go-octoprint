@@ -361,6 +361,46 @@ type UploadFileResponse struct {
 	Done bool `json:"done"`
 }
 
+// SystemCommandsResponse is the response to a SystemCommandsRequest.
+type SystemCommandsResponse struct {
+	Core   []*CommandDefinition `json:"core"`
+	Custom []*CommandDefinition `json:"custom"`
+}
+
+// CommandSource is the source of the command definition.
+type CommandSource string
+
+const (
+	// Core for system actions defined by OctoPrint itself.
+	Core CommandSource = "core"
+	// Custom for custom system commands defined by the user through `config.yaml`.
+	Custom CommandSource = "custom"
+)
+
+// CommandDefinition describe a system command.
+type CommandDefinition struct {
+	// Name of the command to display in the System menu.
+	Name string `json:"name"`
+	// Command is the full command line to execute for the command.
+	Command string `json:"command"`
+	// Action is an identifier to refer to the command programmatically. The
+	// special `action` string divider signifies a `divider` in the menu.
+	Action string `json:"action"`
+	// Confirm if present and set, this text will be displayed to the user in a
+	// confirmation dialog they have to acknowledge in order to really execute
+	// the command.
+	Confirm string `json:"confirm"`
+	// Async whether to execute the command asynchronously or wait for its
+	// result before responding to the HTTP execution request.
+	Async bool `json:"async"`
+	// Ignore whether to ignore the return code of the command’s execution.
+	Ignore bool `json:"ignore"`
+	// Source of the command definition.
+	Source CommandSource `json:"source"`
+	// Resource is the URL of the command to use for executing it.
+	Resource string `json:"resource"`
+}
+
 type JSONTime struct{ time.Time }
 
 func (t JSONTime) MarshalJSON() ([]byte, error) {
