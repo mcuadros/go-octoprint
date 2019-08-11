@@ -822,7 +822,7 @@ type WebcamConfig struct {
 	FFmpegThreads int `json:"ffmpegThreads"`
 	// Watermark whether to include a "created with OctoPrint" watermark in the
 	// generated timelapse movies.
-	Watermark string `json:"watermark"`
+	Watermark bool `json:"watermark"`
 	// FlipH whether to flip the webcam horizontally.
 	FlipH bool `json:"flipH"`
 	// FlipV whether to flip the webcam vertically.
