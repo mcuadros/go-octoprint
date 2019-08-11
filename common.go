@@ -816,7 +816,7 @@ type WebcamConfig struct {
 	FFmpegPath string `json:"ffmpegPath"`
 	// Bitrate to use for rendering the timelapse video. This gets directly
 	// passed to ffmpeg.
-	Bitrate int `json:"bitrate"`
+	Bitrate string `json:"bitrate"`
 	// FFmpegThreads number of how many threads to instruct ffmpeg to use for
 	// encoding. Defaults to 1. Should be left at 1 for RPi1.
 	FFmpegThreads int `json:"ffmpegThreads"`
