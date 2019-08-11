@@ -390,7 +390,7 @@ type CommandDefinition struct {
 	// confirmation dialog they have to acknowledge in order to really execute
 	// the command.
 	RawConfirm json.RawMessage `json:"confirm"`
-	Confirm string `json:"-"`
+	Confirm    string          `json:"-"`
 	// Async whether to execute the command asynchronously or wait for its
 	// result before responding to the HTTP execution request.
 	Async bool `json:"async"`
@@ -549,7 +549,7 @@ type Settings struct {
 	// lines from the display terminal log.
 	TerminalFilters []*TerminalFilter `json:"terminalFilters"`
 	// Webcam settings to configure webcam support.
-	Webcam *WebcamConfig `json:"json"`
+	Webcam *WebcamConfig `json:"webcam"`
 
 	// Un-handled values
 	Appearance interface{} `json:"appearance"`
