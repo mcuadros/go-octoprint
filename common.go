@@ -390,7 +390,7 @@ type CommandDefinition struct {
 	// confirmation dialog they have to acknowledge in order to really execute
 	// the command.
 	RawConfirm json.RawMessage `json:"confirm"`
-	Confirm string `json:"-"`
+	Confirm    string          `json:"-"`
 	// Async whether to execute the command asynchronously or wait for its
 	// result before responding to the HTTP execution request.
 	Async bool `json:"async"`
@@ -549,7 +549,7 @@ type Settings struct {
 	// lines from the display terminal log.
 	TerminalFilters []*TerminalFilter `json:"terminalFilters"`
 	// Webcam settings to configure webcam support.
-	Webcam *WebcamConfig `json:"json"`
+	Webcam *WebcamConfig `json:"webcam"`
 
 	// Un-handled values
 	Appearance interface{} `json:"appearance"`
@@ -816,13 +816,13 @@ type WebcamConfig struct {
 	FFmpegPath string `json:"ffmpegPath"`
 	// Bitrate to use for rendering the timelapse video. This gets directly
 	// passed to ffmpeg.
-	Bitrate int `json:"bitrate"`
+	Bitrate string `json:"bitrate"`
 	// FFmpegThreads number of how many threads to instruct ffmpeg to use for
 	// encoding. Defaults to 1. Should be left at 1 for RPi1.
 	FFmpegThreads int `json:"ffmpegThreads"`
 	// Watermark whether to include a "created with OctoPrint" watermark in the
 	// generated timelapse movies.
-	Watermark string `json:"watermark"`
+	Watermark bool `json:"watermark"`
 	// FlipH whether to flip the webcam horizontally.
 	FlipH bool `json:"flipH"`
 	// FlipV whether to flip the webcam vertically.
