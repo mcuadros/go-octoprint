@@ -289,6 +289,8 @@ type FileInformation struct {
 	GCodeAnalysis GCodeAnalysisInformation `json:"gcodeAnalysis"`
 	// Print information from the print stats of a file.
 	Print PrintStats `json:"print"`
+	// Contained children for entries of type folder. On non-recursive listings only present on first level sub folders!
+	Children []*FileInformation `json:"children"`
 }
 
 // IsFolder it returns true if the file is a folder.
