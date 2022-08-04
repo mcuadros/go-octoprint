@@ -36,5 +36,5 @@ go_test(
         "system_test.go",
     ],
     embed = [":go-octoprint"],
-    deps = ["@com_github_stretchr_testify//assert:go_default_library"],
+    deps = ["@com_github_stretchr_testify//assert"],
 )
