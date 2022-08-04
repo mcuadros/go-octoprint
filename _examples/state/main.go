@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/mcuadros/go-octoprint"
+	"github.com/conrey-engineering/go-octoprint"
 	"github.com/mgutz/logxi/v1"
 )
 
